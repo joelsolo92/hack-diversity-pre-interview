@@ -39,7 +39,8 @@ public class ConversationMetricsCalculator {
       }
     }
 
-    averageResponseTimeMs = totalTimeDifferenceMs / numOfResponses;
+    if (numOfResponses != 0)
+      averageResponseTimeMs = totalTimeDifferenceMs / numOfResponses;
 
     return ConversationResponseMetric.builder()
         .setConversationId(conversation.getId())
