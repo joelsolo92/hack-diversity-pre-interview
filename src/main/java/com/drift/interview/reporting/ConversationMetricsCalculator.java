@@ -23,12 +23,10 @@ public class ConversationMetricsCalculator {
 
       currentMessage = messages.get(x);
       for (int y = x+1; y < messages.size(); y++){
-
         nextMessage = messages.get(y);
         if (currentMessage.isTeamMember() == false && nextMessage.isTeamMember() == true){
             totalTimeDifferenceMs += (nextMessage.getCreatedAt() - currentMessage.getCreatedAt());
             numOfResponses++;
-
             if (y < messages.size() - 1)
               x = y;
             break;
