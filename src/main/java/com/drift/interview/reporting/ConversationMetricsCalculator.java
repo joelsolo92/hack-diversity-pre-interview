@@ -13,22 +13,34 @@ public class ConversationMetricsCalculator {
    */
   ConversationResponseMetric calculateAverageResponseTime(Conversation conversation) {
     List<Message> messages = conversation.getMessages();
-    long responseTimeMs = 0;
+    Message currentMessage;
+    Message nextMessage;
+    int numOfResponses = 0;
+    int totalTimeDifferenceMs = 0;
+    long averageResponseTimeMs = 0;
 
     for (int x = 0; x < messages.size() - 1; x++){
 
-      Message currentMessage = messages.get(x);
-      Message nextMessage = messages.get(x + 1);
+      currentMessage = messages.get(x);
+      for (int y = x+1; y < messages.size(); y++){
 
-      if (currentMessage.isTeamMember() == false && nextMessage.isTeamMember() == true){
-        responseTimeMs = messages.get(x+1).getCreatedAt() - messages.get(x).getCreatedAt();
-        break;
+        nextMessage = messages.get(y);
+        if (currentMessage.isTeamMember() == false && nextMessage.isTeamMember() == true){
+            totalTimeDifferenceMs += (nextMessage.getCreatedAt() - currentMessage.getCreatedAt());
+            numOfResponses++;
+
+            if (y < messages.size() - 1)
+              x = y;
+            break;
+        }
       }
     }
 
+    averageResponseTimeMs = totalTimeDifferenceMs / numOfResponses;
+
     return ConversationResponseMetric.builder()
         .setConversationId(conversation.getId())
-        .setAverageResponseMs(responseTimeMs)
+        .setAverageResponseMs(averageResponseTimeMs)
         .build();
   }
 }
